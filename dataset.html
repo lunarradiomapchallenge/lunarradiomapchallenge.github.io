@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<!--
+	ZeroFour by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>The First Lunar Pathloss Radio Map Prediction Challenge - Dataset/Instructions</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+        <style>
+        table,
+        td,
+        th {
+            border: 1px solid;
+            padding: 20px;
+        }
+    </style>
+	</head>
+	<body class="no-sidebar is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header Wrapper -->
+				<div id="header-wrapper">
+					<div class="container">
+
+						<!-- Header -->
+							<header id="header">
+								<div class="inner">
+
+									<!-- Logo -->
+										<h1><a href="index.html" id="logo">ICASSP 2027 GC</a></h1>
+
+									<!-- Nav -->
+										<nav id="nav">
+											<ul>
+												<li><a href="index.html">Home</a></li>
+												<li class="current_page_item"><a href="dataset.html">Dataset&Instructions</a></li>
+												<li><a href="timeline.html">Timeline</a></li>
+												<li><a href="registration.html">Registration</a></li>
+												<li><a href="results.html">Results</a></li>
+												<li><a href="https://radiomapchallenge.github.io/">ICASSP23</a></li>
+												<li><a href="https://indoorradiomapchallenge.github.io/">ICASSP25</a></li>
+												<li><a href="https://sapradiomapchallenge.github.io/">MLSP25</a></li>
+											</ul>
+										</nav>
+
+								</div>
+							</header>
+
+					</div>
+				</div>
+
+			<!-- Main Wrapper -->
+				<div id="main-wrapper">
+					<div class="wrapper style1">
+						<div class="inner">
+							<div class="container">
+								<div id="content">
+
+									<!-- Content -->
+
+										<article>
+
+  <h3 align="center">The Lunar Radio Map Dataset</h3>
+
+<p><em>The dataset will be made publicly available upon acceptance of the challenge. The download links, the challenge
+documentation and the baseline code will be posted here &mdash; please check back, or
+<a href="registration.html">register</a> to be notified.</em></p>
+
+<p><b>Dataset download: link coming soon.</b><br />
+<b>Challenge documentation and detailed instructions: coming soon.</b><br />
+<b>Baseline code (<em>RadioUNet</em>) with data loaders, training and inference: coming soon.</b></p>
+
+<p>The dataset includes diverse lunar radio maps generated over synthetic topographic models. Initially, we will provide a
+dataset that participants will use to develop their data-driven models, later releasing the test dataset (without the
+ground truth) to select the top-performing teams.</p>
+
+<p>The challenge dataset comprises <b>66,000 PL radio maps</b> generated over synthetic lunar terrains using
+<a href="https://nvlabs.github.io/sionna/">Sionna-RT</a>. Due to the limited amount of high-resolution lunar Digital Terrain
+Models (DTMs), we utilized a procedural pipeline to synthesize 256 &times; 256 meter landscapes at 1 m/px resolution. These
+were statistically validated against actual lunar DTMs to ensure realistic crater distributions and surface ages.
+Electromagnetic properties of lunar regolith were applied to ensure accurate propagation modeling across
+<b>two frequency bands (415 MHz and 5.775 GHz, hereafter referred to as 5.8 GHz)</b>. The dataset is split 85/15 into a
+provided training dataset and a withheld testing dataset for evaluation, structured as follows:</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>Dataset Split</b></td>
+    <td align="center"><b>Terrains (51 TX)</b></td>
+    <td align="center"><b>Terrains (1 TX)</b></td>
+    <td align="center"><b>RMs per Freq.</b></td>
+    <td align="center"><b>Total RMs</b></td>
+  </tr>
+  <tr>
+    <td align="center">Training (85%)</td>
+    <td align="center">425</td>
+    <td align="center">6,375</td>
+    <td align="center">28,050</td>
+    <td align="center">56,100</td>
+  </tr>
+  <tr>
+    <td align="center">Testing (15%)</td>
+    <td align="center">75</td>
+    <td align="center">1,125</td>
+    <td align="center">4,950</td>
+    <td align="center">9,900</td>
+  </tr>
+  <tr>
+    <td align="center"><b>Total</b></td>
+    <td align="center"><b>500</b></td>
+    <td align="center"><b>7,500</b></td>
+    <td align="center"><b>33,000</b></td>
+    <td align="center"><b>66,000</b></td>
+  </tr>
+</table>
+
+  <h3 align="center">Simulation Details</h3>
+
+<p>Simulations modeled line-of-sight paths, specular reflection, diffuse (Lambertian) scattering, and refraction.
+Diffraction was explicitly disabled due to the exponential computational complexity of applying models like UTD to
+continuous, high-resolution terrain micro-edges. To mitigate ray-tracing null pixels, we applied Monte Carlo averaging.
+Remaining gaps were resolved using bilinear interpolation (415 MHz) or a static fill (5.8 GHz). For all simulations, the
+TX height is set at 3 m above the local terrain contour. The RX is measured as an isotropic probe sampled on a mesh
+surface exactly 1 m above the terrain contour, which is then linearly interpolated onto a regular 256 &times; 256 grid. We
+trace the ray path up to a maximum depth of 100 interactions, simulating 4 &times; 10<sup>9</sup> rays per transmitter. The TX
+parameters were set as a single isotropic antenna element with vertical polarization.</p>
+
+<p>Specifically, the dataset includes:</p>
+
+<ul>
+	<li>The target PL RMs saved as .npy files. Each image pixel value represents the positive pathloss of the wireless
+		signal, measured in dB, at the corresponding lunar geometry location.</li>
+	<li>Each PL RM is associated with input physical features, including a continuous height map image representing the
+		topological elevation of the lunar terrain and a one-hot encoded spatial map indicating the exact coordinate
+		location of the transmitter, both also saved as .npy files.</li>
+</ul>
+
+  <h3 align="center">Guidelines for Participants</h3>
+
+<ol>
+	<li>Download the presented dataset and the provided example code, e.g., the data loaders and modules of the presented
+		baseline methods.</li>
+	<li>Develop data-driven PL inference methods using the presented dataset. The participants can make use of the input
+		images to extract additional features. The authors are encouraged to use data augmentation techniques, and a
+		default augmentation pipeline will be provided with the dataset.</li>
+	<li>The participating teams submit their radio map estimates along with their trained models and the test code that
+		runs the evaluation of the model on the test set. Participants have the flexibility to submit either a single
+		unified model that predicts both frequency bands (e.g., using a boolean image flag as a condition, as demonstrated
+		in <em>RadioLunaDiff</em>) or two distinct models trained separately for the 415 MHz and 5.8 GHz tasks.</li>
+</ol>
+
+  <h3 align="center">References</h3>
+
+<p>[1] J. Hoydis, S. Cammerer, F. Ait Aoudia, M. Nimier-David, L. Maggi, G. Marcus, A. Vem, and A. Keller,
+	&ldquo;<a href="https://nvlabs.github.io/sionna/">Sionna</a>,&rdquo; 2022.</p>
+
+<p>[2] P. Torrado, A. Pearson, J. Klein, A. Moscibroda, and J. Smith, &ldquo;RadioLunaDiff: Estimation of wireless network
+	signal strength in lunar terrain,&rdquo; in <em>ICASSP 2026 &mdash; 2026 IEEE International Conference on Acoustics, Speech
+	and Signal Processing (ICASSP)</em>, 2026, pp. 21231&ndash;21235.</p>
+
+<p>[3] R. Levie, &Ccedil;. Yapar, G. Kutyniok, and G. Caire, &ldquo;RadioUNet: Fast radio map estimation with convolutional
+	neural networks,&rdquo; <em>IEEE Transactions on Wireless Communications</em>, vol. 20, no. 6, pp. 4001&ndash;4015, 2021.</p>
+
+										</article>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+			<!-- Footer Wrapper -->
+				<div id="footer-wrapper">
+					<footer id="footer" class="container">
+						<div class="row">
+							<div class="col-3 col-6-medium col-12-small">
+
+
+							</div>
+			<div class="col-12">
+								<div id="copyright">
+									<ul class="menu">
+										<li>The First Lunar Pathloss Radio Map Prediction Challenge</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+									</ul>
+                                    <dd><a href="mailto:lunarradiomapchallenge@gmail.com">lunarradiomapchallenge@gmail.com</a></dd>
+								</div>
+							</div>
+						</div>
+					</footer>
+				</div>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

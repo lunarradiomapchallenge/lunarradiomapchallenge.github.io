@@ -1,7 +1,7 @@
 # lunarradiomapchallenge.github.io
 
 Website for **The First Lunar Pathloss Radio Map Prediction Challenge** (IEEE ICASSP 2027 Signal
-Processing Grand Challenge, pending acceptance).
+Processing Grand Challenge).
 
 Live at <https://lunarradiomapchallenge.github.io/>.
 
@@ -24,10 +24,11 @@ Static HTML, no build step. GitHub Pages serves `main` from the repository root.
 Edit the HTML directly and push to `main`; Pages redeploys in a minute or so. The nav block and the
 footer are duplicated in every page — update all of them together.
 
-Placeholders still to fill in once the challenge is accepted:
+Placeholders still to fill in:
 
 - dataset download link, challenge documentation link, baseline code link (`dataset.html`)
-- Discord invite (`index.html`)
+- Discord invite (`index.html`) — the whole paragraph is commented out; uncomment it once there is
+  an invite link
 - confirmed dates (`timeline.html`, and the deadline paragraph in `index.html`)
 
 ## Credits

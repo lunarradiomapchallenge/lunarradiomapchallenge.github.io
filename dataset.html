@@ -66,7 +66,7 @@
 
   <h3 align="center">The Lunar Radio Map Dataset</h3>
 
-<p><em>The dataset will be made publicly available upon acceptance of the challenge. The download links, the challenge
+<p><em>The dataset will be made publicly available soon. The download links, the challenge
 documentation and the baseline code will be posted here &mdash; please check back, or
 <a href="registration.html">register</a> to be notified.</em></p>
 
@@ -78,9 +78,12 @@ documentation and the baseline code will be posted here &mdash; please check bac
 dataset that participants will use to develop their data-driven models, later releasing the test dataset (without the
 ground truth) to select the top-performing teams.</p>
 
-<p>The challenge dataset comprises <b>66,000 PL radio maps</b> generated over synthetic lunar terrains using
+<p>The challenge dataset comprises <b>66,000 PL radio maps</b> generated over
+<a href="https://github.com/anderspearson206/LunarTerrainGenerator">synthetic lunar terrains</a> using
 <a href="https://nvlabs.github.io/sionna/">Sionna-RT</a>. Due to the limited amount of high-resolution lunar Digital Terrain
-Models (DTMs), we utilized a procedural pipeline to synthesize 256 &times; 256 meter landscapes at 1 m/px resolution. These
+Models (DTMs), we utilized a
+<a href="https://github.com/anderspearson206/LunarTerrainGenerator">procedural pipeline</a> to synthesize
+256 &times; 256 meter landscapes at 1 m/px resolution. These
 were statistically validated against actual lunar DTMs to ensure realistic crater distributions and surface ages.
 Electromagnetic properties of lunar regolith were applied to ensure accurate propagation modeling across
 <b>two frequency bands (415 MHz and 5.775 GHz, hereafter referred to as 5.8 GHz)</b>. The dataset is split 85/15 into a
@@ -149,7 +152,8 @@ parameters were set as a single isotropic antenna element with vertical polariza
 	<li>The participating teams submit their radio map estimates along with their trained models and the test code that
 		runs the evaluation of the model on the test set. Participants have the flexibility to submit either a single
 		unified model that predicts both frequency bands (e.g., using a boolean image flag as a condition, as demonstrated
-		in <em>RadioLunaDiff</em>) or two distinct models trained separately for the 415 MHz and 5.8 GHz tasks.</li>
+		in <a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>) or two distinct models trained separately
+		for the 415 MHz and 5.8 GHz tasks.</li>
 </ol>
 
   <h3 align="center">References</h3>
@@ -157,8 +161,9 @@ parameters were set as a single isotropic antenna element with vertical polariza
 <p>[1] J. Hoydis, S. Cammerer, F. Ait Aoudia, M. Nimier-David, L. Maggi, G. Marcus, A. Vem, and A. Keller,
 	&ldquo;<a href="https://nvlabs.github.io/sionna/">Sionna</a>,&rdquo; 2022.</p>
 
-<p>[2] P. Torrado, A. Pearson, J. Klein, A. Moscibroda, and J. Smith, &ldquo;RadioLunaDiff: Estimation of wireless network
-	signal strength in lunar terrain,&rdquo; in <em>ICASSP 2026 &mdash; 2026 IEEE International Conference on Acoustics, Speech
+<p>[2] P. Torrado, A. Pearson, J. Klein, A. Moscibroda, and J. Smith,
+	&ldquo;<a href="https://radiolunadiff.github.io/">RadioLunaDiff: Estimation of wireless network
+	signal strength in lunar terrain</a>,&rdquo; in <em>ICASSP 2026 &mdash; 2026 IEEE International Conference on Acoustics, Speech
 	and Signal Processing (ICASSP)</em>, 2026, pp. 21231&ndash;21235.</p>
 
 <p>[3] R. Levie, &Ccedil;. Yapar, G. Kutyniok, and G. Caire, &ldquo;RadioUNet: Fast radio map estimation with convolutional

@@ -113,8 +113,11 @@ variations over unseen 1 m/px lunar terrains, accounting for the deeper regolith
 frequencies.</p>
 
 <p><b>Task 2: High-Frequency Coverage Prediction (5.8 GHz).</b> This task focuses on the 5.8 GHz band, where signal
-attenuation and shadowing are much more pronounced. Participants must ensure their models accurately capture sharp
-discontinuities and large contiguous voids without over-smoothing the predictions.</p>
+attenuation and shadowing are much more pronounced. Participants must ensure their models accurately capture the sharp
+shadowing discontinuities cast by crater rims and ridges without over-smoothing the predictions. Note that the 5.8 GHz
+ground truth contains a static placeholder value where the ray tracer could not resolve a cell; <b>those pixels are
+excluded from scoring</b>, so the correct strategy is to predict real propagation everywhere rather than to reproduce
+the placeholder regions. See <a href="dataset.html">Dataset &amp; Instructions</a>.</p>
 
 <p>Participants may choose to design a single conditional model capable of predicting both frequency bands, or they may
 develop two independent models dedicated to each specific task. A prerequisite for a successful submission is that the
@@ -128,10 +131,20 @@ computer vision and image generation in recent years.</p>
 											</header>
 
 <p>The final ranking will be determined by two evaluation metrics, equally weighted: <b>50% low-frequency prediction
-accuracy and 50% high-frequency prediction accuracy</b>. For both Task 1 and Task 2, we compute the standard Root Mean
-Square Error (RMSE) in dB between the predicted and ground truth pathloss values across all pixels in the test set.
-Separate RMSE scores are calculated for the 415 MHz and 5.8 GHz test sets. The final ranking score is determined by
-normalizing the RMSE across all participating teams and computing the combined sum.</p>
+accuracy and 50% high-frequency prediction accuracy</b>. For both Task 1 and Task 2, we compute the Root Mean Square
+Error (RMSE) in dB between the predicted and ground truth pathloss values <b>over valid (ray-traced) pixels only</b>
+&mdash; that is, pixels where the released validity mask equals 1. Separate RMSE scores are calculated for the 415 MHz
+and 5.8 GHz test sets. The final ranking score is determined by normalizing the RMSE across all participating teams and
+computing the combined sum.</p>
+
+<p><b>Why valid pixels only.</b> The ray tracer could not resolve every cell, and the unresolved cells were gap-filled
+&mdash; at 5.8 GHz with a static placeholder of exactly 145.0 dB, covering roughly 11.4% of all 5.8 GHz pixels. Those
+values are placeholders, not physics. Scored over every pixel, a model could gain more by learning <em>where the ray
+tracer failed</em> &mdash; the voids are geometrically structured &mdash; than by modeling lunar propagation, an effect
+large enough on this dataset to invert the ranking between two otherwise comparable models. Exact validity masks ship
+with the training and validation data. <b>You submit full 256 &times; 256 maps and the mask is applied by the organizers
+at scoring time</b>, so you never need the test masks. All-pixel RMSE is reported alongside as a diagnostic, but does
+not rank.</p>
 
 											<header class="major">
 												<h2>Baseline</h2>
@@ -140,7 +153,36 @@ normalizing the RMSE across all participating teams and computing the combined s
 <p>Although the first work to apply DL-based methods to predicting lunar RMs was
 <a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>, it was optimized for
 the dataset and does not provide a simple baseline. Instead, we propose to use <em>RadioUNet</em>, which has already served as
-a baseline in previous RM challenges. Code to support data loading, training, and inference will be provided.</p>
+a baseline in previous RM challenges. Code supporting data loading, training, evaluation and inference is provided in the
+challenge repository (<em>link coming soon</em>), together with the reference dataloader and the exact scoring script used
+by the organizers.</p>
+
+<p>The RadioWNet baseline reaches the following RMSE on the withheld test set, over valid (ray-traced) pixels:</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>Model</b></td>
+    <td align="center"><b>415 MHz</b></td>
+    <td align="center"><b>5.8 GHz</b></td>
+    <td align="center"><b>Combined (50/50)</b></td>
+  </tr>
+  <tr>
+    <td align="center">Two band-specific models</td>
+    <td align="center">4.66 dB</td>
+    <td align="center">6.28 dB</td>
+    <td align="center"><b>5.47 dB</b></td>
+  </tr>
+  <tr>
+    <td align="center">One conditional model, both bands</td>
+    <td align="center" colspan="2">&mdash;</td>
+    <td align="center"><b>5.61 dB</b></td>
+  </tr>
+</table>
+
+<p>Both were trained with a masked loss, i.e. on ray-traced pixels only. This matters: at 5.8 GHz the masked-loss
+baseline scores 6.28 dB against 6.63 dB for the same model trained on every pixel, yet the all-pixel model looks
+<em>better</em> on the all-pixel diagnostic (6.86 dB against 7.08 dB). Optimizing the placeholder regions trades away
+real propagation accuracy, which is exactly what the metric is designed to discourage.</p>
 
 											<header class="major">
 												<h2>Publication</h2>

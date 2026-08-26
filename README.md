@@ -26,10 +26,22 @@ footer are duplicated in every page — update all of them together.
 
 Placeholders still to fill in:
 
-- dataset download link, challenge documentation link, baseline code link (`dataset.html`)
+- challenge repository link (`dataset.html` downloads block, and the Baseline paragraph in
+  `index.html`) — both currently read *link coming soon*
 - Discord invite (`index.html`) — the whole paragraph is commented out; uncomment it once there is
   an invite link
 - confirmed dates (`timeline.html`, and the deadline paragraph in `index.html`)
+- submission format details in the `dataset.html` Guidelines list, once the Kaggle Code Competition
+  notebook template is finalized
+
+The dataset download now points at the Kaggle competition page.
+
+## Evaluation metric
+
+The ranking metric is **RMSE in dB over valid (ray-traced) pixels only** — gap-filled pixels are
+excluded. This is documented in `index.html` (Evaluation Criteria), `dataset.html` (Validity Masks
+and Scoring) and the commented ranking-table template in `results.html`. If the metric ever changes
+again, those three places must move together.
 
 ## Credits
 

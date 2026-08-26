@@ -70,8 +70,11 @@
 submission deadline.</em></p>
 
 <!--
-	Ranking table template. RMSE in dB; the final score is obtained by normalizing the RMSE
-	across all participating teams and computing the combined sum (50% / 50%).
+	Ranking table template. RMSE in dB over valid (ray-traced) pixels only -- gap-filled
+	pixels are excluded, see dataset.html. The final score is obtained by normalizing the
+	masked RMSE across all participating teams and computing the combined sum (50% / 50%).
+
+	Baseline for reference: RadioWNet, masked loss -- 4.66 dB (415 MHz), 6.28 dB (5.8 GHz).
 
 <table align="center">
   <tr>

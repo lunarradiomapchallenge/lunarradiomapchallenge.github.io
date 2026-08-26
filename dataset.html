@@ -66,17 +66,22 @@
 
   <h3 align="center">The Lunar Radio Map Dataset</h3>
 
-<p><em>The dataset will be made publicly available soon. The download links, the challenge
-documentation and the baseline code will be posted here &mdash; please check back, or
-<a href="registration.html">register</a> to be notified.</em></p>
+<p>The dataset is distributed through Kaggle, and the challenge runs as a <b>Kaggle Code Competition</b>: participants
+submit a notebook that performs inference, and the organizers execute it against the withheld test set. This is what
+allows the per-map runtime limit to be verified uniformly for every team.</p>
 
-<p><b>Dataset download: link coming soon.</b><br />
-<b>Challenge documentation and detailed instructions: coming soon.</b><br />
-<b>Baseline code (<em>RadioUNet</em>) with data loaders, training and inference: coming soon.</b></p>
+<p><b>Dataset download and submission:</b>
+<a href="https://www.kaggle.com/competitions/the-first-lunar-pathloss-radio-map-prediction-challenge"><font color="blue">Kaggle competition page</font></a><br />
+<b>Challenge repository (dataloader, baseline, scoring script):</b> <em>link coming soon</em><br />
+<b>Full dataset documentation:</b> ships inside every archive as <code>README.md</code></p>
 
-<p>The dataset includes diverse lunar radio maps generated over synthetic topographic models. Initially, we will provide a
-dataset that participants will use to develop their data-driven models, later releasing the test dataset (without the
-ground truth) to select the top-performing teams.</p>
+<p>The archives unpack into a single <code>LunarRM/</code> tree. Download only the bands you intend to work on; the
+index files describe both bands in every archive. Verify what you downloaded against the published
+<code>SHA256SUMS.txt</code>.</p>
+
+<p>The dataset includes diverse lunar radio maps generated over synthetic topographic models. Participants receive a
+training split and a <b>frozen validation split</b> with full ground truth; the test inputs are released without their
+ground truth, which is withheld by the organizers to select the top-performing teams.</p>
 
 <p>The challenge dataset comprises <b>66,000 PL radio maps</b> generated over
 <a href="https://github.com/anderspearson206/LunarTerrainGenerator">synthetic lunar terrains</a> using
@@ -87,7 +92,8 @@ Models (DTMs), we utilized a
 were statistically validated against actual lunar DTMs to ensure realistic crater distributions and surface ages.
 Electromagnetic properties of lunar regolith were applied to ensure accurate propagation modeling across
 <b>two frequency bands (415 MHz and 5.775 GHz, hereafter referred to as 5.8 GHz)</b>. The dataset is split 85/15 into a
-provided training dataset and a withheld testing dataset for evaluation, structured as follows:</p>
+provided development set and a withheld test set; the development set is further divided into a training and a frozen
+validation split, structured as follows:</p>
 
 <table align="center">
   <tr>
@@ -98,14 +104,21 @@ provided training dataset and a withheld testing dataset for evaluation, structu
     <td align="center"><b>Total RMs</b></td>
   </tr>
   <tr>
-    <td align="center">Training (85%)</td>
-    <td align="center">425</td>
-    <td align="center">6,375</td>
-    <td align="center">28,050</td>
-    <td align="center">56,100</td>
+    <td align="center">Training</td>
+    <td align="center">392</td>
+    <td align="center">5,728</td>
+    <td align="center">25,720</td>
+    <td align="center">51,440</td>
   </tr>
   <tr>
-    <td align="center">Testing (15%)</td>
+    <td align="center">Validation (frozen)</td>
+    <td align="center">33</td>
+    <td align="center">647</td>
+    <td align="center">2,330</td>
+    <td align="center">4,660</td>
+  </tr>
+  <tr>
+    <td align="center">Testing (15%, withheld)</td>
     <td align="center">75</td>
     <td align="center">1,125</td>
     <td align="center">4,950</td>
@@ -120,12 +133,30 @@ provided training dataset and a withheld testing dataset for evaluation, structu
   </tr>
 </table>
 
+<p>Splitting is at the <b>terrain level</b> and stratified by transmitter count, so no terrain &mdash; and therefore no
+heightmap &mdash; appears on more than one side. A terrain carrying 51 transmitters keeps all 51 of its samples together,
+because those samples share a heightmap and separating them would leak.</p>
+
+  <h3 align="center">Validation Split</h3>
+
+<p>The validation split ships as <b>its own directory</b>, already separated from the training data. It is a 10% slice of
+the development terrains, frozen, and identical for everyone. <b>Report validation numbers from this split</b> &mdash;
+because every entrant measures on the same 2,330 maps per band, those numbers are directly comparable. Re-splitting the
+training data for your own model selection is perfectly fine; just do not report that as your validation score.</p>
+
+<p>The split is defined on terrains, so it is <b>band-independent</b>: the same terrains are held out at 415 MHz, at
+5.8 GHz, and for a model trained jointly on both. The file <code>val_terrains.txt</code> lists the 680 validation terrain
+ids and travels with the data as provenance; you do not need to apply it yourself, since the directories are already
+separated. Note that 10% of terrains is 8.3% of samples, because terrains carry unequal transmitter counts.</p>
+
   <h3 align="center">Simulation Details</h3>
 
 <p>Simulations modeled line-of-sight paths, specular reflection, diffuse (Lambertian) scattering, and refraction.
 Diffraction was explicitly disabled due to the exponential computational complexity of applying models like UTD to
-continuous, high-resolution terrain micro-edges. To mitigate ray-tracing null pixels, we applied Monte Carlo averaging.
-Remaining gaps were resolved using bilinear interpolation (415 MHz) or a static fill (5.8 GHz). For all simulations, the
+continuous, high-resolution terrain micro-edges. To mitigate ray-tracing null pixels, we applied Monte Carlo averaging over
+incrementing solver seeds. Remaining gaps were resolved using linear interpolation (415 MHz) or a static fill of exactly
+145.0 dB (5.8 GHz), which left much larger contiguous voids than interpolation could sensibly bridge. <b>Gap-filled
+pixels are excluded from scoring</b> &mdash; see <a href="#masks">Validity Masks and Scoring</a> below. For all simulations, the
 TX height is set at 3 m above the local terrain contour. The RX is measured as an isotropic probe sampled on a mesh
 surface exactly 1 m above the terrain contour, which is then linearly interpolated onto a regular 256 &times; 256 grid. We
 trace the ray path up to a maximum depth of 100 interactions, simulating 4 &times; 10<sup>9</sup> rays per transmitter. The TX
@@ -134,25 +165,103 @@ parameters were set as a single isotropic antenna element with vertical polariza
 <p>Specifically, the dataset includes:</p>
 
 <ul>
-	<li>The target PL RMs saved as .npy files. Each image pixel value represents the positive pathloss of the wireless
-		signal, measured in dB, at the corresponding lunar geometry location.</li>
-	<li>Each PL RM is associated with input physical features, including a continuous height map image representing the
-		topological elevation of the lunar terrain and a one-hot encoded spatial map indicating the exact coordinate
-		location of the transmitter, both also saved as .npy files.</li>
+	<li>The target PL RMs saved as .npy files (float16). Each image pixel value represents the positive pathloss of the
+		wireless signal, measured in dB, at the corresponding lunar geometry location. Pathloss is independent of transmit
+		power; the simulation used a fixed 20 dBm isotropic transmitter, so received power is
+		<code>RSS_dBm = 20 &minus; pathloss_dB</code>.</li>
+	<li>Each PL RM is associated with input physical features, including a continuous height map image (float32, metres
+		above that tile's own minimum elevation) representing the topological elevation of the lunar terrain and a one-hot
+		encoded spatial map (uint8) indicating the exact coordinate location of the transmitter, both also saved as .npy
+		files. Heightmaps are stored once per terrain and shared by all of that terrain's transmitters.</li>
+	<li><b>Validity masks</b> (.npy, one per sample per band) marking which pixels the ray tracer actually resolved:
+		1 = ray-traced, 0 = gap-filled. <b>These masks define the evaluation metric.</b> They ship with the training and
+		validation splits; test masks are withheld and are not needed.</li>
+	<li><code>index.csv</code>, listing one row per (terrain, transmitter) sample with the paths to every array, and
+		<code>mask_index.csv</code>, giving the mask paths and the valid-pixel fraction per sample so you can filter or
+		stratify by fill level.</li>
+	<li><code>metadata.json</code> with units, value ranges, normalization bounds and the full simulation parameters, and
+		<code>lunar_dataset.py</code>, a reference PyTorch dataloader.</li>
 </ul>
+
+  <h3 align="center"><a id="masks"></a>Validity Masks and Scoring</h3>
+
+<p>Ray tracing with finite samples leaves some cells unresolved, and those cells were gap-filled. At 415 MHz they were
+linearly interpolated and take continuous values. At 5.8 GHz they were set to a <b>static 145.0 dB</b>, which is
+substantial and very unevenly distributed:</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>Share of 5.8 GHz pixels that are gap-filled</b></td>
+    <td align="center"><b>Overall</b></td>
+    <td align="center"><b>Median map</b></td>
+    <td align="center"><b>90th pct. map</b></td>
+    <td align="center"><b>Worst map</b></td>
+  </tr>
+  <tr>
+    <td align="center">&nbsp;</td>
+    <td align="center"><b>11.4%</b></td>
+    <td align="center">4.1%</td>
+    <td align="center">32.6%</td>
+    <td align="center">78.7%</td>
+  </tr>
+</table>
+
+<p>Note that 145.0 dB is <em>not</em> an out-of-range sentinel &mdash; real 5.8 GHz pathloss runs to roughly 228 dB, so the
+fill sits inside the physical range and cannot be identified by thresholding.</p>
+
+<p><b>These pixels are excluded from scoring.</b> They are placeholders rather than simulated values, and the challenge
+metric is RMSE over valid (ray-traced) pixels only, computed separately per band and weighted 50/50. Predict real
+propagation everywhere: you submit full 256 &times; 256 maps and the mask is applied at scoring time.</p>
+
+<p>Exact masks are supplied with the training and validation splits, recovered from the pre-fill simulation output, where
+<code>1</code> means the ray tracer produced the value and <code>0</code> means it was filled. Coverage is complete for
+both bands, so masking removes pixels, never samples. Typical valid-pixel fractions:</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>Band</b></td>
+    <td align="center"><b>Mean valid</b></td>
+    <td align="center"><b>Median</b></td>
+    <td align="center"><b>Minimum</b></td>
+  </tr>
+  <tr>
+    <td align="center">415 MHz</td>
+    <td align="center">99.27%</td>
+    <td align="center">99.35%</td>
+    <td align="center">74.31%</td>
+  </tr>
+  <tr>
+    <td align="center">5.8 GHz</td>
+    <td align="center">89.57%</td>
+    <td align="center">96.23%</td>
+    <td align="center">7.47%</td>
+  </tr>
+</table>
+
+<p>You can approximate the filled region with <code>pl58 == 145.0</code>, but <b>prefer the supplied masks</b>: pathloss is
+stored as float16, whose spacing at 145 dB is 0.125, so genuine values within &plusmn;0.0625 dB of the fill quantize onto
+it. Measured against the exact masks, that test mislabels about 0.02% of real pixels. Small, but the masks are exact and
+cost nothing.</p>
+
+<p>The masks are also what you want in the <b>training loss</b>, so that the placeholder regions do not pull your model
+toward a constant. All-pixel RMSE is reported alongside the ranking metric as a diagnostic only.</p>
 
   <h3 align="center">Guidelines for Participants</h3>
 
 <ol>
-	<li>Download the presented dataset and the provided example code, e.g., the data loaders and modules of the presented
-		baseline methods.</li>
-	<li>Develop data-driven PL inference methods using the presented dataset. The participants can make use of the input
+	<li>Download the dataset from the <a href="https://www.kaggle.com/competitions/the-first-lunar-pathloss-radio-map-prediction-challenge">Kaggle competition page</a> and the provided example code, e.g., the
+		data loaders and modules of the presented baseline methods.</li>
+	<li>Develop data-driven PL inference methods using the presented dataset. Participants can make use of the input
 		images to extract additional features. The authors are encouraged to use data augmentation techniques, and a
-		default augmentation pipeline will be provided with the dataset.</li>
-	<li>The participating teams submit their radio map estimates along with their trained models and the test code that
-		runs the evaluation of the model on the test set. Participants have the flexibility to submit either a single
-		unified model that predicts both frequency bands (e.g., using a boolean image flag as a condition, as demonstrated
-		in <a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>) or two distinct models trained separately
+		default augmentation pipeline is provided with the dataset. <b>Train against the validity masks</b> so that
+		gap-filled pixels do not influence your loss, and <b>report validation results on the frozen validation split</b>
+		that ships with the data.</li>
+	<li>Teams submit through the Kaggle Code Competition: a notebook that loads your trained model, predicts full
+		256 &times; 256 pathloss maps for the test inputs, and writes them in the documented submission format. The
+		organizers execute the notebook, apply the validity masks, and compute the ranking metric. The notebook must also
+		satisfy the per-map runtime limit. Participants have the flexibility to submit either a single unified model that
+		predicts both frequency bands (e.g., using a boolean image flag as a condition, as demonstrated in
+		<a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>) or two distinct models trained separately
 		for the 415 MHz and 5.8 GHz tasks.</li>
 </ol>
 

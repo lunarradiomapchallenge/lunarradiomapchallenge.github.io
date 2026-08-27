@@ -157,7 +157,7 @@ a baseline in previous RM challenges. Code supporting data loading, training, ev
 challenge repository (<em>link coming soon</em>), together with the reference dataloader and the exact scoring script used
 by the organizers.</p>
 
-<p>The RadioWNet baseline reaches the following RMSE on the withheld test set, over valid (ray-traced) pixels:</p>
+<p>The RadioUNet baseline reaches the following RMSE on the withheld test set, over valid (ray-traced) pixels:</p>
 
 <table align="center">
   <tr>
@@ -174,14 +174,15 @@ by the organizers.</p>
   </tr>
   <tr>
     <td align="center">One conditional model, both bands</td>
-    <td align="center" colspan="2">&mdash;</td>
-    <td align="center"><b>5.61 dB</b></td>
+    <td align="center">4.76 dB</td>
+    <td align="center">6.42 dB</td>
+    <td align="center"><b>5.59 dB</b></td>
   </tr>
 </table>
 
 <p>Both were trained with a masked loss, i.e. on ray-traced pixels only. This matters: at 5.8 GHz the masked-loss
-baseline scores 6.28 dB against 6.63 dB for the same model trained on every pixel, yet the all-pixel model looks
-<em>better</em> on the all-pixel diagnostic (6.86 dB against 7.08 dB). Optimizing the placeholder regions trades away
+baseline scores 6.38 dB against 6.63 dB for the same architecture and schedule trained on every pixel, yet the
+all-pixel model looks <em>better</em> on the all-pixel diagnostic (6.86 dB against 7.13 dB). Optimizing the placeholder regions trades away
 real propagation accuracy, which is exactly what the metric is designed to discourage.</p>
 
 											<header class="major">

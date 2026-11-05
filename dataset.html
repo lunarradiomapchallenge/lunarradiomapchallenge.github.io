@@ -66,10 +66,11 @@
 
   <h3 align="center">The Lunar Radio Map Dataset</h3>
 
-<p>The dataset is distributed through Kaggle, and the challenge dataset is partially run through a <b>Kaggle Code Competition</b>. 
-The final evaluation will be conducted by the organizers privately, not through kaggle.</p>
+<p>The dataset is distributed through Kaggle, and the challenge is partially run through a <b>Kaggle Code Competition</b>.
+The final evaluation is conducted privately by the organizers, not through Kaggle: see
+<a href="#submission">Final Submission</a>.</p>
 
-<p><b>Dataset download and submission:</b>
+<p><b>Dataset download:</b>
 <a href="https://www.kaggle.com/t/1e9cf1fa5c774010a6922e98abb60449"><font color="blue">Kaggle competition page</font></a><br />
 <b>Challenge repository (dataloader, baseline, scoring script):</b> 
 <a href="https://github.com/anderspearson206/lunar-radiomap-challenge"><font color="blue">GitHub repository</font></a><br />
@@ -133,14 +134,14 @@ validation split, structured as follows:</p>
   </tr>
 </table>
 
-<p>Splitting is at the <b>terrain level</b> and stratified by transmitter count, so no terrain &mdash; and therefore no
-heightmap &mdash; appears on more than one side. A terrain carrying 51 transmitters keeps all 51 of its samples together,
+<p>Splitting is at the <b>terrain level</b> and stratified by transmitter count, so no terrain, and therefore no
+heightmap, appears on more than one side. A terrain carrying 51 transmitters keeps all 51 of its samples together,
 because those samples share a heightmap and separating them would leak.</p>
 
   <h3 align="center">Validation Split</h3>
 
 <p>The validation split ships as <b>its own directory</b>, already separated from the training data. It is a 10% slice of
-the development terrains, frozen, and identical for everyone. <b>Report validation numbers from this split</b> &mdash;
+the development terrains, frozen, and identical for everyone. <b>Report validation numbers from this split</b>,
 because every entrant measures on the same 2,330 maps per band, those numbers are directly comparable. Re-splitting the
 training data for your own model selection is perfectly fine; just do not report that as your validation score.</p>
 
@@ -156,7 +157,7 @@ Diffraction was explicitly disabled due to the exponential computational complex
 continuous, high-resolution terrain micro-edges. To mitigate ray-tracing null pixels, we applied Monte Carlo averaging over
 incrementing solver seeds. Remaining gaps were resolved using linear interpolation (415 MHz) or a static fill of exactly
 145.0 dB (5.8 GHz), which left much larger contiguous voids than interpolation could sensibly bridge. <b>Gap-filled
-pixels are excluded from scoring</b> &mdash; see <a href="#masks">Validity Masks and Scoring</a> below. For all simulations, the
+pixels are excluded from scoring</b>; see <a href="#masks">Validity Masks and Scoring</a> below. For all simulations, the
 TX height is set at 3 m above the local terrain contour. The RX is measured as an isotropic probe sampled on a mesh
 surface exactly 1 m above the terrain contour, which is then linearly interpolated onto a regular 256 &times; 256 grid. We
 trace the ray path up to a maximum depth of 100 interactions, simulating 4 &times; 10<sup>9</sup> rays per transmitter. The TX
@@ -206,7 +207,7 @@ substantial and very unevenly distributed:</p>
   </tr>
 </table>
 
-<p>Note that 145.0 dB is <em>not</em> an out-of-range sentinel &mdash; real 5.8 GHz pathloss runs to roughly 228 dB, so the
+<p>Note that 145.0 dB is <em>not</em> an out-of-range sentinel: real 5.8 GHz pathloss runs to roughly 228 dB, so the
 fill sits inside the physical range and cannot be identified by thresholding.</p>
 
 <p><b>These pixels are excluded from scoring.</b> They are placeholders rather than simulated values, and the challenge
@@ -249,21 +250,46 @@ toward a constant. All-pixel RMSE is reported alongside the ranking metric as a 
   <h3 align="center">Guidelines for Participants</h3>
 
 <ol>
-	<li>Download the dataset from the <a href="https://www.kaggle.com/competitions/the-first-lunar-pathloss-radio-map-prediction-challenge">Kaggle competition page</a> and the provided example code, e.g., the
+	<li>Download the dataset from the <a href="https://www.kaggle.com/t/1e9cf1fa5c774010a6922e98abb60449">Kaggle competition page</a> and the provided example code from the <a href="https://github.com/anderspearson206/lunar-radiomap-challenge">challenge repository</a>, e.g., the
 		data loaders and modules of the presented baseline methods.</li>
 	<li>Develop data-driven PL inference methods using the presented dataset. Participants can make use of the input
 		images to extract additional features. The authors are encouraged to use data augmentation techniques, and a
 		default augmentation pipeline is provided with the dataset. <b>Train against the validity masks</b> so that
 		gap-filled pixels do not influence your loss, and <b>report validation results on the frozen validation split</b>
 		that ships with the data.</li>
-	<li>Teams will submit the trained model, inference code, and training code. The inference code must take the test inputs, generate
-		256 &times; 256 pathloss maps for the test inputs, and writes them in the documented submission format. The
-		organizers execute the notebook, apply the validity masks, and compute the ranking metric. The notebook must also
-		satisfy the per-map runtime limit. Participants have the flexibility to submit either a single unified model that
+	<li>Teams will email their final submission to the organizers, as described in
+		<a href="#submission">Final Submission</a>. Participants have the flexibility to submit either a single unified model that
 		predicts both frequency bands (e.g., using a boolean image flag as a condition, as demonstrated in
 		<a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>) or two distinct models trained separately
 		for the 415 MHz and 5.8 GHz tasks.</li>
 </ol>
+
+  <h3 align="center"><a id="submission"></a>Final Submission</h3>
+
+<p>The final evaluation is executed by the organizers, off Kaggle. The test inputs are released on <b>December 16</b> with
+their ground truth withheld, and submissions are due on <b>December 20</b>.</p>
+
+<p><b>Train your final model on the Train + Val sets</b>, which is all of the currently released data, and then use it to
+predict the test set radio maps. Validation scores should come from a model trained on the training split alone, before
+this final retraining.</p>
+
+<p>Each team must email the following to
+<a href="mailto:lunarradiomapchallenge@gmail.com">lunarradiomapchallenge@gmail.com</a>.
+Large files may be shared through a download link in your email.</p>
+
+<ul>
+	<li><b>Trained model weights</b>, trained on Train + Val.</li>
+	<li><b>Inference script</b> that runs the model on the test set. It should include a run-time evaluation, because
+		inference must stay under 500 ms per map.</li>
+	<li><b>Training script</b>.</li>
+	<li><b>Predicted radio maps for the test set</b>: one <code>.npy</code> file per test sample per band
+		(<code>pl415_&lt;sample_id&gt;.npy</code> and <code>pl58_&lt;sample_id&gt;.npy</code>), each 256 &times; 256
+		pathloss in dB. You can check the files with <code>score_submission.py --validate-only</code> from the
+		<a href="https://github.com/anderspearson206/lunar-radiomap-challenge">challenge repository</a>.</li>
+	<li><b>A short README</b> explaining how to run the evaluations.</li>
+</ul>
+
+<p>The organizers apply the validity masks to the predicted maps and compute the ranking metric.</p>
 
   <h3 align="center">References</h3>
 
@@ -272,7 +298,7 @@ toward a constant. All-pixel RMSE is reported alongside the ranking metric as a 
 
 <p>[2] P. Torrado, A. Pearson, J. Klein, A. Moscibroda, and J. Smith,
 	&ldquo;<a href="https://radiolunadiff.github.io/">RadioLunaDiff: Estimation of wireless network
-	signal strength in lunar terrain</a>,&rdquo; in <em>ICASSP 2026 &mdash; 2026 IEEE International Conference on Acoustics, Speech
+	signal strength in lunar terrain</a>,&rdquo; in <em>2026 IEEE International Conference on Acoustics, Speech
 	and Signal Processing (ICASSP)</em>, 2026, pp. 21231&ndash;21235.</p>
 
 <p>[3] R. Levie, &Ccedil;. Yapar, G. Kutyniok, and G. Caire, &ldquo;RadioUNet: Fast radio map estimation with convolutional

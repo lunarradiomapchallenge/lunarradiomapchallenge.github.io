@@ -62,7 +62,10 @@
 										<article>
 
 <p><strong>An IEEE ICASSP 2027 Signal Processing Grand Challenge.</strong>
-<em>The dataset links, the exact deadlines and the submission platform will be announced on this page.</em></p>
+The training dataset and baseline code are available now: see the
+<a href="https://www.kaggle.com/t/1e9cf1fa5c774010a6922e98abb60449"><font color="blue">Kaggle competition page</font></a> and the
+<a href="https://github.com/anderspearson206/lunar-radiomap-challenge"><font color="blue">challenge repository</font></a>.
+<b>Registration deadline: December 10.</b> All dates are on the <a href="timeline.html">Timeline</a>.</p>
 
 <p><strong>Join our <a href="https://discord.gg/4pm25VFqMx"><font color="red">challenge Discord server</font></a> for announcements and Q&amp;A! (updated link that should not expire, please email lunarradiomapchallenge@gmail.com if it does not work)</strong></p>
 
@@ -132,13 +135,13 @@ computer vision and image generation in recent years.</p>
 
 <p>The final ranking will be determined by two evaluation metrics, equally weighted: <b>50% low-frequency prediction
 accuracy and 50% high-frequency prediction accuracy</b>. For both Task 1 and Task 2, we compute the Root Mean Square
-Error (RMSE) in dB between the predicted and ground truth pathloss values <b>over valid (ray-traced) pixels only</b>
-- that is, pixels where the released validity mask equals 1. Separate RMSE scores are calculated for the 415 MHz
+Error (RMSE) in dB between the predicted and ground truth pathloss values <b>over valid (ray-traced) pixels only</b>,
+that is, pixels where the released validity mask equals 1. Separate RMSE scores are calculated for the 415 MHz
 and 5.8 GHz test sets. The final ranking score is determined by normalizing the RMSE across all participating teams and
 computing the combined sum.</p>
 
-<p><b>Why valid pixels only.</b> The ray tracer could not resolve every cell, and the unresolved cells were gap-filled
-- at 5.8 GHz with a static placeholder of exactly 145.0 dB, covering roughly 11.4% of all 5.8 GHz pixels. Those
+<p><b>Why valid pixels only.</b> The ray tracer could not resolve every cell, and the unresolved cells were gap-filled,
+at 5.8 GHz with a static placeholder of exactly 145.0 dB, covering roughly 11.4% of all 5.8 GHz pixels. Those
 values are placeholders, not physics. Scored over every pixel, a model could gain more by learning <em>where the ray
 tracer failed</em> than by modeling lunar propagation, an effect
 large enough on this dataset to invert the ranking between two otherwise comparable models. Exact validity masks ship
@@ -154,7 +157,7 @@ not rank.</p>
 <a href="https://radiolunadiff.github.io/"><em>RadioLunaDiff</em></a>, it was optimized for
 the dataset and does not provide a simple baseline. Instead, we propose to use <em>RadioUNet</em>, which has already served as
 a baseline in previous RM challenges. Code supporting data loading, training, evaluation and inference is provided in the
-challenge repository (<em>link coming soon</em>), together with the reference dataloader and the exact scoring script used
+<a href="https://github.com/anderspearson206/lunar-radiomap-challenge">challenge repository</a>, together with the reference dataloader and the exact scoring script used
 by the organizers.</p>
 
 <p>The RadioUNet baseline reaches the following RMSE on the withheld test set, over valid (ray-traced) pixels:</p>
@@ -194,9 +197,9 @@ real propagation accuracy, which is exactly what the metric is designed to disco
 ICASSP proceedings. The teams that present their work at ICASSP are also invited to submit a full paper about their work
 to the <em>IEEE Open Journal of Signal Processing</em>.</p>
 
-<p><b>Release of the evaluation test dataset: December 16. Deadline for submission of the trained models and the radio map
-estimates: December 20.</b> (Final dates to be confirmed - see the
-<a href="timeline.html">Timeline</a>.)</p>
+<p><b>Registration deadline: December 10. Release of the evaluation test dataset: December 16. Deadline for submission of
+the trained models and the radio map estimates: December 20.</b> See the <a href="timeline.html">Timeline</a> for all
+dates and <a href="dataset.html#submission">Final Submission</a> for what to send.</p>
 
                                             <p>
                                             Support on the dataset and the instructions will be provided by the organizing team.</p>

@@ -22,23 +22,24 @@ Static HTML, no build step. GitHub Pages serves `main` from the repository root.
 ## Editing
 
 Edit the HTML directly and push to `main`; Pages redeploys in a minute or so. The nav block and the
-footer are duplicated in every page — update all of them together.
+footer are duplicated in every page, so update all of them together.
+
+Dates appear in `timeline.html`, `registration.html` (registration deadline), and two places in
+`index.html` (the intro and the paragraph above Organizers). Change them together.
 
 Placeholders still to fill in:
 
-- challenge repository link (`dataset.html` downloads block, and the Baseline paragraph in
-  `index.html`) — both currently read *link coming soon*
-- Discord invite (`index.html`) — the whole paragraph is commented out; uncomment it once there is
-  an invite link
-- confirmed dates (`timeline.html`, and the deadline paragraph in `index.html`)
-- submission format details in the `dataset.html` Guidelines list, once the Kaggle Code Competition
-  notebook template is finalized
+- remaining TBD dates in `timeline.html`
 
-The dataset download now points at the Kaggle competition page.
+Final submission rules (emailed to the organizers, evaluated off Kaggle) are in the Final Submission
+section of `dataset.html`.
+
+Kaggle links use the invite URL (`kaggle.com/t/...`), and the plain competition URL can return 404
+to visitors who have not joined.
 
 ## Evaluation metric
 
-The ranking metric is **RMSE in dB over valid (ray-traced) pixels only** — gap-filled pixels are
+The ranking metric is **RMSE in dB over valid (ray-traced) pixels only**; gap-filled pixels are
 excluded. This is documented in `index.html` (Evaluation Criteria), `dataset.html` (Validity Masks
 and Scoring) and the commented ranking-table template in `results.html`. If the metric ever changes
 again, those three places must move together.

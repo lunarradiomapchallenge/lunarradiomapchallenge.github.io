@@ -256,7 +256,7 @@ toward a constant. All-pixel RMSE is reported alongside the ranking metric as a 
 		default augmentation pipeline is provided with the dataset. <b>Train against the validity masks</b> so that
 		gap-filled pixels do not influence your loss, and <b>report validation results on the frozen validation split</b>
 		that ships with the data.</li>
-	<li>Teams submit through the Kaggle Code Competition: a notebook that loads your trained model, predicts full
+	<li>Teams will submit the trained model, inference code, and training code. The inference code must take the test inputs, generate
 		256 &times; 256 pathloss maps for the test inputs, and writes them in the documented submission format. The
 		organizers execute the notebook, apply the validity masks, and compute the ranking metric. The notebook must also
 		satisfy the per-map runtime limit. Participants have the flexibility to submit either a single unified model that

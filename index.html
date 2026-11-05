@@ -133,14 +133,14 @@ computer vision and image generation in recent years.</p>
 <p>The final ranking will be determined by two evaluation metrics, equally weighted: <b>50% low-frequency prediction
 accuracy and 50% high-frequency prediction accuracy</b>. For both Task 1 and Task 2, we compute the Root Mean Square
 Error (RMSE) in dB between the predicted and ground truth pathloss values <b>over valid (ray-traced) pixels only</b>
-&mdash; that is, pixels where the released validity mask equals 1. Separate RMSE scores are calculated for the 415 MHz
+- that is, pixels where the released validity mask equals 1. Separate RMSE scores are calculated for the 415 MHz
 and 5.8 GHz test sets. The final ranking score is determined by normalizing the RMSE across all participating teams and
 computing the combined sum.</p>
 
 <p><b>Why valid pixels only.</b> The ray tracer could not resolve every cell, and the unresolved cells were gap-filled
-&mdash; at 5.8 GHz with a static placeholder of exactly 145.0 dB, covering roughly 11.4% of all 5.8 GHz pixels. Those
+- at 5.8 GHz with a static placeholder of exactly 145.0 dB, covering roughly 11.4% of all 5.8 GHz pixels. Those
 values are placeholders, not physics. Scored over every pixel, a model could gain more by learning <em>where the ray
-tracer failed</em> &mdash; the voids are geometrically structured &mdash; than by modeling lunar propagation, an effect
+tracer failed</em> than by modeling lunar propagation, an effect
 large enough on this dataset to invert the ranking between two otherwise comparable models. Exact validity masks ship
 with the training and validation data. <b>You submit full 256 &times; 256 maps and the mask is applied by the organizers
 at scoring time</b>, so you never need the test masks. All-pixel RMSE is reported alongside as a diagnostic, but does
@@ -195,7 +195,7 @@ ICASSP proceedings. The teams that present their work at ICASSP are also invited
 to the <em>IEEE Open Journal of Signal Processing</em>.</p>
 
 <p><b>Release of the evaluation test dataset: December 16. Deadline for submission of the trained models and the radio map
-estimates: December 20.</b> (Final dates to be confirmed &mdash; see the
+estimates: December 20.</b> (Final dates to be confirmed - see the
 <a href="timeline.html">Timeline</a>.)</p>
 
                                             <p>
